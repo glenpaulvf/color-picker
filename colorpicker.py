@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QColorDialog
 from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import Qt
 
@@ -31,6 +31,9 @@ class ColorPickerWindow(QWidget):
         
         
 class ColorViewer(QWidget):
+    
+    # Viewer properties
+    viewer_color = Qt.red
         
     def paintEvent(self, event):
         painter = QPainter()
@@ -40,30 +43,36 @@ class ColorViewer(QWidget):
     
     def draw_viewer(self, painter):
         painter.setPen(Qt.black)
-        painter.setBrush(Qt.red)
+        painter.setBrush(ColorViewer.viewer_color)
         painter.drawRect(10, 10, 50, 50)
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            self.press_pos = event.globalPos()
-            self.move_pos = event.globalPos()
+        self.press_pos = event.globalPos()
+        self.move_pos = event.globalPos()
 
         super(ColorViewer, self).mousePressEvent(event)
     
     def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.LeftButton:
-            # Adjust offset from clicked point to origin of widget
-            curr_pos = self.mapToGlobal(self.pos())
-            global_pos = event.globalPos()
-            offset = global_pos - self.move_pos
-            new_pos = self.mapFromGlobal(curr_pos + offset)
-            self.move(new_pos)
-            self.move_pos = global_pos
-
+        # Adjust offset from clicked point to origin of widget
+        curr_pos = self.mapToGlobal(self.pos())
+        global_pos = event.globalPos()
+        offset = global_pos - self.move_pos
+        new_pos = self.mapFromGlobal(curr_pos + offset)
+        self.move(new_pos)
+        self.move_pos = global_pos
+        
         super(ColorViewer, self).mouseMoveEvent(event)
     
     def mouseReleaseEvent(self, event):
         super(ColorViewer, self).mouseReleaseEvent(event)
+        
+    def mouseDoubleClickEvent(self, event):
+        color_dialog = QColorDialog()
+        #color_dialog.move(self.x(), self.y())
+        new_color = color_dialog.getColor()
+        if new_color.isValid():
+            ColorViewer.viewer_color = new_color
+            self.update()
 
 
 if __name__ == '__main__':
