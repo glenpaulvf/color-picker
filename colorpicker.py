@@ -28,7 +28,7 @@ class ColorPickerWindow(QWidget):
     
     def draw_viewer(self, painter):
         painter.setPen(Qt.black)
-        painter.setBrush(Qt.white)
+        painter.setBrush(Qt.red)
         painter.drawRect(10, 10, 50, 50)
 
 
